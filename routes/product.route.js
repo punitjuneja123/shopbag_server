@@ -54,9 +54,42 @@ productRoute.get("/product/productview/:id", async (req, res) => {
 // search option
 productRoute.get("/product/search/:search", async (req, res) => {
   let query = req.params.search;
-  let data = await productModel.find({
-    title: { $regex: query, $options: "i" },
-  });
-  res.send(data);
+
+  let page = req.query.page;
+  let sort = req.query.sort;
+  if (page == undefined) {
+    let data = await productModel.find({
+      title: { $regex: query, $options: "i" },
+    });
+    res.send(data);
+  } else {
+    if (sort == "lth") {
+      let data = await productModel
+        .find({
+          title: { $regex: query, $options: "i" },
+        })
+        .sort({ disprice: 1 })
+        .limit(12)
+        .skip(12 * (page - 1));
+      res.send(data);
+    } else if (sort == "htl") {
+      let data = await productModel
+        .find({
+          title: { $regex: query, $options: "i" },
+        })
+        .sort({ disprice: -1 })
+        .limit(12)
+        .skip(12 * (page - 1));
+      res.send(data);
+    } else {
+      let data = await productModel
+        .find({
+          title: { $regex: query, $options: "i" },
+        })
+        .limit(12)
+        .skip(12 * (page - 1));
+      res.send(data);
+    }
+  }
 });
 module.exports = { productRoute };
