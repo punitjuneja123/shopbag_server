@@ -52,9 +52,11 @@ productRoute.get("/product/productview/:id", async (req, res) => {
 });
 
 // search option
-productRoute.get("/product/search", async (req, res) => {
-  let query = req.query.search;
-  let data = await productModel.find({ title: { $regex: query } });
+productRoute.get("/product/search/:search", async (req, res) => {
+  let query = req.params.search;
+  let data = await productModel.find({
+    title: { $regex: query, $options: "i" },
+  });
   res.send(data);
 });
 module.exports = { productRoute };
