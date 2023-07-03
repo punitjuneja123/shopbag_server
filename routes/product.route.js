@@ -6,7 +6,7 @@ productRoute.get("/product", (req, res) => {
   res.send("mobile,laptop,mensfashion,womensfashion");
 });
 
-// ........................................................mobile route.........................................................
+// ........................................................product route.........................................................
 productRoute.get("/product/:product", async (req, res) => {
   let product = req.params.product;
   let page = req.query.page;
@@ -61,7 +61,12 @@ productRoute.get("/product/search/:search", async (req, res) => {
     let data = await productModel.find({
       title: { $regex: query, $options: "i" },
     });
-    res.send(data);
+    if (data.length > 0) {
+      res.send(data);
+    } else {
+      res.status(400);
+      res.send("no product found");
+    }
   } else {
     if (sort == "lth") {
       let data = await productModel
